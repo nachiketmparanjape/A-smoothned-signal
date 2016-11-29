@@ -19,16 +19,19 @@ def data_loader(filename):
     df = pd.read_csv(filename + '.csv')
     #Subsetting the dataframe
     df = df.ix[:162029][['Time (ms)','Channel','Sensor Resistance (kOhms)']]
-    df['Time (ms)'] = pd.to_numeric(df['Time (ms)'])
+    df['Time (ms)'] = pd.to_numeric(df['Time (ms)'], errors = coerce)
+    df['Time (s)'] = df['Time (ms)']/1000
+    df.drop('Time (ms)', axis=1, inplace=True)
     #Creating the pivot table and eliminating the unnecessary columns
-    pivoted = df.pivot('Time (ms)','Channel','Sensor Resistance (kOhms)')[[0,1,2,3,4,5,6,7,8,9]]
+    pivoted = df.pivot('Time (s)','Channel','Sensor Resistance (kOhms)')[[0,1,2,3,4,5,6,7,8,9]]
     return pivoted
 
 def plotter(dataframe,filename):
     """ This is a plotting function. Crates a figure with two plots. Inputs - dataframe to be plotted and filename for the plots generated"""
     #Create a folder to save the files separetely
-    if not os.path.exists(filename):
-        os.makedirs(filename)
+    folder_name = filename + "_Plots"
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
     
     
     for i in range(10):
@@ -38,15 +41,16 @@ def plotter(dataframe,filename):
         
         #Figures!
         #Fig 1 - initialization
-        #fig = plt.figure(figsize=(25,10))
+        fig = plt.figure()
         #plt.plot()
-        #plot = df_temp.plot()
-        #fig = plot.get_figure()
+        plot = df_temp.plot(figsize=(25,10))
+        fig = plot.get_figure()
         
         #Saving the plots in a subfolder
-        #folder_name = filename + "_Plots"
-        #fig.savefig(folder_name +"/"+filename+"_Channel_"+str(i)+".tif",orientation='portrait',papertype='letter')
         
+        fig.savefig(folder_name +'/'+ filename +"_Channel_"+str(i)+".tif",orientation='portrait',papertype='letter')
+        
+    print "success"
     return df_temp
     
 
