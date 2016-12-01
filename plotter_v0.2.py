@@ -9,21 +9,25 @@ Created on Mon Nov 21 16:46:27 2016
 
 import os
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+#import numpy as np
+#import matplotlib.pyplot as plt
 
     
 def data_loader(filename):
     """ Used to load the csv files into an appropriate dataframe"""
     #Importing data
     df = pd.read_csv(filename + '.csv')
+    print "\nData Loaded.\n"
+    print ".......Starting the process.......\n"
+    print "=================================================================================="
     #Subsetting the dataframe
-    df = df.ix[:162029][['Time (ms)','Channel','Sensor Resistance (kOhms)']]
+    df = df[['Time (ms)','Channel','Sensor Resistance (kOhms)']]
     df['Time (ms)'] = pd.to_numeric(df['Time (ms)'], errors = coerce)
     df['Time (s)'] = df['Time (ms)']/1000
     df.drop('Time (ms)', axis=1, inplace=True)
+    df = df[:-8]
     #Creating the pivot table and eliminating the unnecessary columns
-    pivoted = df.pivot('Time (s)','Channel','Sensor Resistance (kOhms)')[[0,1,2,3,4,5,6,7,8,9]]
+    pivoted = df.pivot('Time (s)','Channel','Sensor Resistance (kOhms)')
     return pivoted
 
 def plotter(dataframe,filename):
@@ -33,33 +37,38 @@ def plotter(dataframe,filename):
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
     
-    
+    print "\nSmoothing and Plotting"
     for i in range(10):
+        print "\n Channel "+ str(i+1)
         df_temp = dataframe[[i]].dropna()
         #Exponential Moving Average
         df_temp['EMV'] = df_temp.ewm(span=100,min_periods=0,adjust=True).mean()
+        #print "Smoothened"
         
         #Figures!
         #Fig 1 - initialization
-        fig = plt.figure()
+        #plot = plt.figure()
         #plt.plot()
         plot = df_temp.plot(figsize=(25,10))
         fig = plot.get_figure()
+        #print "Plotted"
         
         #Saving the plots in a subfolder
         
         fig.savefig(folder_name +'/'+ filename +"_Channel_"+str(i)+".tif",orientation='portrait',papertype='letter')
-        
-    print "success"
+    print
+    print "Plotting Successfull!"
+    print 
+    print "=================================================================================="
     return df_temp
     
 
 def filename_input():
     flag = True
-    print " ### Welcome to the FTIR plotting tool (from DPT files) ###"
+    print " ### This tool performs smoothing on the data and plots it along with the raw signal ###"
     while flag:
         try:
-            name1 = raw_input("File"+" - Please enter the name of the data file you want to plot!!!")
+            name1 = raw_input("Please enter the name of the data file you want to plot!!! \n\n Name --> ")
             df = data_loader(name1)
             plotter(df,name1)
             flag = False
@@ -69,7 +78,7 @@ def filename_input():
           
 
 def main():
-    print "Welcome to the dataplotter!\n"
+    print "\nWelcome to the dataplotter!\n"
     
     
     choice = 0
