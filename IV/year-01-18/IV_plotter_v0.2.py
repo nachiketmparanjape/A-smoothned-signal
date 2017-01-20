@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 #import numpy as np
 import glob
 import os
+#import sys
+#import platform
+#from datetime import datetime
 
 def datareader(filename):
     """Data Import and Cleaning
@@ -82,8 +85,58 @@ def main_R():
         
     right = []
     for i in R:
-        if i > 0 and i < 5:
+        if i > 0 and i < 20:
             right.append(i)
     
     plt.hist(right,bins=100)
+    #plt.axis([2.2, 3.6, 0, 5])
     return right
+#main_R()
+
+#R = []
+#files = file_list("10*.lvm")
+#for fil in files:
+#    l = datareader(fil)
+#    
+#    for df in l:
+#        R_count(R,df)
+#    
+#right1 = []
+#for i in R:
+#    if i > 0 and i < 20:
+#        right1.append(i)
+#
+#R = []            
+#files = file_list("20*.lvm")
+#for fil in files:
+#    l = datareader(fil)
+#    
+#    for df in l:
+#        R_count(R,df)
+#    
+#right2 = []
+#for i in R:
+#    if i > 0 and i < 20:
+#        right2.append(i)
+#
+#R = []
+#files = file_list("30*.lvm")
+#for fil in files:
+#    l = datareader(fil)
+#    
+#    for df in l:
+#        R_count(R,df)
+#    
+#right3 = []
+#for i in R:
+#    if i > 0 and i < 20:
+#        right3.append(i)
+#        
+#plt.figure(figsize=(10,5))
+#plt.hist(right1,bins=100)
+#plt.hist(right2,bins=100)
+#plt.hist(right3,bins= 100)
+#plt.legend(["10s","20s","30s"])
+#plt.xlabel("Resistance - kOhm")
+#plt.axis([0, 5.5,0,3])
+#plt.show()
