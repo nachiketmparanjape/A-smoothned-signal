@@ -112,9 +112,10 @@ def yield_printer():
     print ("30s Yield -\t" + str(round(R/Rtotal,4)) + "\t(" + str(R) + "/" + str(Rtotal) + ")")
 #main_R()
 
-#R = []
+
 
 """ This is a template used to print histogram for the resistances with a hue given to the different deposition times"""
+#R = []
 #files = file_list("10*.lvm")
 #for fil in files:
 #    l = datareader(fil)
@@ -156,12 +157,12 @@ def yield_printer():
 #
 #import numpy
 #bins = numpy.linspace(0, 10, 400)        
-#plt.figure(figsize=(10,5))
+#plt.figure(figsize=(8,5))
 #plt.hist(right1,bins,alpha=0.5)
 #plt.hist(right2,bins,alpha=0.5)
 #plt.hist(right3,bins,alpha=0.5)
 #plt.legend(["10s","20s","30s"])
 #plt.xlabel("Resistance - kOhm")
-##plt.axis([2, 4,0,4.5])
+#plt.axis([0, 6,0,3.5])
 #plt.show()
 
