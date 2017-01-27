@@ -92,68 +92,54 @@ def yield_calculator(file_search='*.lvm'):
         
     right = []
     for i in R:
-        if i > 0 and i < 10:
+        if i > 10 and i < 30:
             right.append(i)
             
     #plt.hist(right,bins=100)
     #plt.axis([2.2, 3.6, 0, 5])
     #y = float(len(right))/len(R)
-    return float(len(right)), float(len(R))
+    return right, R
     
 def yield_printer():
     """ Prints out overall as well as recipe specific yield """
+    
     R, Rtotal = yield_calculator()
-    print ("\nOverall Yield -\t" + str(round(R/Rtotal,4)) + "\t(" + str(R) + "/" + str(Rtotal) + ")")
+    R = float(len(R))
+    Rtotal = float(len(Rtotal))
+    try: #to handle zerodivision error
+        print ("\nOverall Yield -\t" + str(round(R/Rtotal,4)) + "\t(" + str(R) + "/" + str(Rtotal) + ")")
+    except ZeroDivisionError:
+        pass
+    
     R, Rtotal = yield_calculator("10*.lvm")
-    print ("10s Yield -\t" + str(round(R/Rtotal,4)) + "\t(" + str(R) + "/" + str(Rtotal) + ")")
+    R = float(len(R))
+    Rtotal = float(len(Rtotal))
+    try:
+        print ("10s Yield -\t" + str(round(R/Rtotal,4)) + "\t(" + str(R) + "/" + str(Rtotal) + ")")
+    except ZeroDivisionError:
+        pass
+    
     R, Rtotal = yield_calculator("20*.lvm")
-    print ("20s Yield -\t" + str(round(R/Rtotal,4)) + "\t(" + str(R) + "/" + str(Rtotal) + ")")
+    R = float(len(R))
+    Rtotal = float(len(Rtotal))
+    try:
+        print ("20s Yield -\t" + str(round(R/Rtotal,4)) + "\t(" + str(R) + "/" + str(Rtotal) + ")")
+    except ZeroDivisionError:
+        pass
+    
     R, Rtotal = yield_calculator("30*.lvm")
-    print ("30s Yield -\t" + str(round(R/Rtotal,4)) + "\t(" + str(R) + "/" + str(Rtotal) + ")")
+    R = float(len(R))
+    Rtotal = float(len(Rtotal))
+    try:
+        print ("30s Yield -\t" + str(round(R/Rtotal,4)) + "\t(" + str(R) + "/" + str(Rtotal) + ")")
+    except ZeroDivisionError:
+        pass
 #main_R()
 
 
 
 """ This is a template used to print histogram for the resistances with a hue given to the different deposition times"""
-#R = []
-#files = file_list("10*.lvm")
-#for fil in files:
-#    l = datareader(fil)
-#    
-#    for df in l:
-#        R_count(R,df)
-#    
-#right1 = []
-#for i in R:
-#    if i > 0 and i < 10:
-#        right1.append(i)
-#
-#R = []            
-#files = file_list("20*.lvm")
-#for fil in files:
-#    l = datareader(fil)
-#    
-#    for df in l:
-#        R_count(R,df)
-#    
-#right2 = []
-#for i in R:
-#    if i > 0 and i < 10:
-#        right2.append(i)
-#
-#R = []
-#files = file_list("30*.lvm")
-#for fil in files:
-#    l = datareader(fil)
-#    
-#    for df in l:
-#        R_count(R,df)
-#    
-#right3 = []
-#for i in R:
-#    if i > 0 and i < 10:
-#        right3.append(i)
-#
+
 #
 #import numpy
 #bins = numpy.linspace(0, 10, 400)        
@@ -166,3 +152,15 @@ def yield_printer():
 #plt.axis([0, 6,0,3.5])
 #plt.show()
 
+""" Plotting one historgram"""
+
+#import numpy
+#bins = numpy.linspace(0, 60, 120)        
+#plt.figure(figsize=(8,5))
+##plt.hist(right1,bins,alpha=0.5)
+#plt.hist(right2,bins,alpha=0.5)
+##plt.hist(right3,bins,alpha=0.5)
+#plt.legend(["20s"])
+#plt.xlabel("Resistance - kOhm")
+##plt.axis([0, 6,0,3.5])
+#plt.show()
