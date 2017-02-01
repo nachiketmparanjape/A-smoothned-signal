@@ -49,6 +49,18 @@ def R_count(R,df):
     #print R
     #plt.boxplot(R)
     
+def R_count2(R,df):
+    #IV_Curve(dataframe)
+    df['Resistance'] = df['Voltage']/df['Current']
+    R.append(round((df['Resistance'][1]+df['Resistance'][-1])/2*0.001,4))
+#    if round(df['Resistance'].mean()*0.001,4) < 5:
+#        R.append(round(df['Resistance'].mean()*0.001,4))
+#    else:
+#        R_waste.append(round(df['Resistance'].mean()*0.001,4))
+    #print ("Resistance = " + str(round(dataframe['Resistance'].mean()*0.001,3)) + " kOhm")
+    #print R
+    #plt.boxplot(R)
+    
 def file_list(file_search='*.lvm'):
     l = glob.glob(str(file_search))
     return l
@@ -80,7 +92,7 @@ def main_IV():
             i += 1
             
             
-def yield_calculator(file_search='*.lvm'):
+def R_list(file_search='*.lvm'):
     R = []
     #file_search = raw_input("Please input a string for filename criteria - ")
     files = file_list(file_search)
@@ -103,7 +115,7 @@ def yield_calculator(file_search='*.lvm'):
 def yield_printer():
     """ Prints out overall as well as recipe specific yield """
     
-    R, Rtotal = yield_calculator()
+    R, Rtotal = R_list()
     R = float(len(R))
     Rtotal = float(len(Rtotal))
     try: #to handle zerodivision error
@@ -111,7 +123,7 @@ def yield_printer():
     except ZeroDivisionError:
         pass
     
-    R, Rtotal = yield_calculator("10*.lvm")
+    R, Rtotal = R_list("10*.lvm")
     R = float(len(R))
     Rtotal = float(len(Rtotal))
     try:
@@ -119,7 +131,7 @@ def yield_printer():
     except ZeroDivisionError:
         pass
     
-    R, Rtotal = yield_calculator("20*.lvm")
+    R, Rtotal = R_list("20*.lvm")
     R = float(len(R))
     Rtotal = float(len(Rtotal))
     try:
@@ -127,7 +139,7 @@ def yield_printer():
     except ZeroDivisionError:
         pass
     
-    R, Rtotal = yield_calculator("30*.lvm")
+    R, Rtotal = R_list("30*.lvm")
     R = float(len(R))
     Rtotal = float(len(Rtotal))
     try:
@@ -135,6 +147,8 @@ def yield_printer():
     except ZeroDivisionError:
         pass
 #main_R()
+            
+    
 
 
 
@@ -155,12 +169,12 @@ def yield_printer():
 """ Plotting one historgram"""
 
 #import numpy
-#bins = numpy.linspace(0, 60, 120)        
+#bins = numpy.linspace(0, 100, 10)        
 #plt.figure(figsize=(8,5))
 ##plt.hist(right1,bins,alpha=0.5)
 #plt.hist(right2,bins,alpha=0.5)
-##plt.hist(right3,bins,alpha=0.5)
+#plt.hist(right3,bins,alpha=0.5)
 #plt.legend(["20s"])
 #plt.xlabel("Resistance - kOhm")
-##plt.axis([0, 6,0,3.5])
+#plt.axis([0, 6,0,3.5])
 #plt.show()
