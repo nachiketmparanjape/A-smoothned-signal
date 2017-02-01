@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-#import numpy as np
+import numpy as np
 import glob
 import os
 #import sys
@@ -44,17 +44,49 @@ def Resistances(df):
     Also, populates the input lists for compilation purposes"""
     
     #Ohmic Region
-    V1high = float(df[df['Voltage'] > 0.94][df['Voltage'] < 0.96]['Voltage'])
-    V1low = float(df[df['Voltage'] > 0.74][df['Voltage'] < 0.76]['Voltage'])
-    I1high = float(df[df['Voltage'] > 0.94][df['Voltage'] < 0.96]['Current'])
-    I1low = float(df[df['Voltage'] > 0.74][df['Voltage'] < 0.76]['Current'])
+    try:
+        V1high = float(df[df['Voltage'] > 0.94][df['Voltage'] < 0.96]['Voltage'])
+    except TypeError:
+        V1high = np.nan
+        
+    try:
+        V1low = float(df[df['Voltage'] > 0.74][df['Voltage'] < 0.76]['Voltage'])
+    except TypeError:
+        V1low = np.nan
+        
+    try:    
+        I1high = float(df[df['Voltage'] > 0.94][df['Voltage'] < 0.96]['Current'])
+    except TypeError:
+        I1high = np.nan
+        
+    try:
+        I1low = float(df[df['Voltage'] > 0.74][df['Voltage'] < 0.76]['Current'])
+    except TypeError:
+        I1low = np.nan
+        
     R1 = (V1high - V1low) * 0.001 / (I1high - I1low)
     
     #Shocky Region
-    V2high = float(df[df['Voltage'] > 0.24][df['Voltage'] < 0.26]['Voltage'])
-    V2low = float(df[df['Voltage'] < -0.24][df['Voltage'] > -0.26]['Voltage'])
-    I2high = float(df[df['Voltage'] > 0.24][df['Voltage'] < 0.26]['Current'])
-    I2low = float(df[df['Voltage'] < -0.24][df['Voltage'] > -0.26]['Current'])
+    try:
+        V2high = float(df[df['Voltage'] > 0.24][df['Voltage'] < 0.26]['Voltage'])
+    except TypeError:
+        V2high = np.nan
+    
+    try:
+        V2low = float(df[df['Voltage'] < -0.23][df['Voltage'] > -0.25]['Voltage'])
+    except TypeError:
+        V2low = np.nan
+    
+    try:
+        I2high = float(df[df['Voltage'] > 0.24][df['Voltage'] < 0.26]['Current'])
+    except TypeError:
+        I2high = np.nan
+        
+    try:
+        I2low = float(df[df['Voltage'] < -0.24][df['Voltage'] > -0.26]['Current'])
+    except TypeError:
+        I2low = np.nan
+    
     R2 = (V2high - V2low) * 0.001 / (I2high - I2low)
     
     return R1, R2
@@ -123,17 +155,22 @@ def R_df(file_search = '*.lvm'):
     R2list = []
     sensorlist = []
     files = file_list(file_search)
+    j = 1
     for fil in files:
         l = datareader(fil)
-        i = 0
+        i = 1
+        print ("\n\n............Processing file " + str(j) + "............")
+        j += 1
         
         for df in l:
+            print ("\n............ Calculating Resistances for Dataset " + str(i) + "............")
             R1, R2 = Resistances(df)
             R1list.append(R1)
             R2list.append(R2)
             i += 1
             sensor = str(fil) + "_" + str(i)
             sensorlist.append(sensor)
+            
             
     Rdf['Sensor'] = sensorlist
     Rdf['ROhmic'] = R1list
