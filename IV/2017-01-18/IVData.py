@@ -45,7 +45,7 @@ def Resistances(df):
     
     #Ohmic Region
     try:
-        V1high = float(df[df['Voltage'] > 0.94][df['Voltage'] < 0.96]['Voltage'])
+        V1high = float(df[df['Voltage'] > 0.84][df['Voltage'] < 0.86]['Voltage'])
     except TypeError:
         V1high = np.nan
         
@@ -55,7 +55,7 @@ def Resistances(df):
         V1low = np.nan
         
     try:    
-        I1high = float(df[df['Voltage'] > 0.94][df['Voltage'] < 0.96]['Current'])
+        I1high = float(df[df['Voltage'] > 0.84][df['Voltage'] < 0.86]['Current'])
     except TypeError:
         I1high = np.nan
         
@@ -73,7 +73,7 @@ def Resistances(df):
         V2high = np.nan
     
     try:
-        V2low = float(df[df['Voltage'] < -0.23][df['Voltage'] > -0.25]['Voltage'])
+        V2low = float(df[df['Voltage'] > 0.05][df['Voltage'] < 0.07]['Voltage'])
     except TypeError:
         V2low = np.nan
     
@@ -83,7 +83,7 @@ def Resistances(df):
         I2high = np.nan
         
     try:
-        I2low = float(df[df['Voltage'] < -0.24][df['Voltage'] > -0.26]['Current'])
+        I2low = float(df[df['Voltage'] > 0.05][df['Voltage'] < 0.07]['Current'])
     except TypeError:
         I2low = np.nan
     
