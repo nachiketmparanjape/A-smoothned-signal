@@ -3,9 +3,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 import glob
 import os
+from datetime import datetime
 #import sys
 #import platform
 #from datetime import datetime
+
+def file_list(file_search='*.lvm'):
+    """ Searches for files of specific types or names and compiles their names in a list.
+    
+    file_search requires a phrase (string). Default = '*.lvm'"""
+    l = glob.glob(str(file_search))
+    return l
 
 def datareader(filename):
     """Data Import and Cleaning
@@ -22,6 +30,20 @@ def datareader(filename):
     df8 = pd.read_csv(filename,sep='\t',skiprows = 799, usecols = [1,2], names = ['Voltage','Current'],nrows=101,dtype='float')
     
     return [df1, df2, df3, df4, df5, df6, df7, df8]
+
+def dateparser(filename):
+    """ Extracts the date on which the data was recorded from the file. Returns a single date value. """
+    #Open the file with read only mode
+    f= open(filename,"r")
+    
+    #Read the file line by line
+    for i in range(10):
+        date = f.readline()
+    
+    date = date[5:-1]
+    date = datetime.strptime(date, '%Y/%m/%d').date()
+        
+    return date
 
 
 def IV_Curve(dataframe,foldername,i):
@@ -92,23 +114,18 @@ def Resistances(df):
     return R1, R2
     
 
-def file_list(file_search='*.lvm'):
-    """ Searches for files of specific types or names and compiles their names in a list.
-    
-    file_search requires a phrase (string). Default = '*.lvm'"""
-    l = glob.glob(str(file_search))
-    return l
+
 
     
 def main_IV():
     
     """This plots the IV data for a list of files. Takes string input from user as a search term"""
     
-    print "\nNow processing all the lvm files in the present folder"
-    print "==================================================================================\n"
+    print ("\nNow processing all the lvm files in the present folder")
+    print ("==================================================================================\n")
     
     
-    file_search = raw_input("Please input a string for filename criteria - ")
+    file_search = input("Please input a string for filename criteria - ")
     files = file_list(file_search)
     n = 1 #Printing File no
     for fil in files:
@@ -136,7 +153,7 @@ def R_list(file_search='*.lvm'):
     
     R1list = []
     R2list = []
-    #file_search = raw_input("Please input a string for filename criteria - ")
+    #file_search = input("Please input a string for filename criteria - ")
     files = file_list(file_search)
     for fil in files:
         l = datareader(fil)
@@ -150,33 +167,65 @@ def R_list(file_search='*.lvm'):
     
 def R_df(file_search = '*.lvm'):
     
-    Rdf = pd.DataFrame(columns = ['Sensor','ROhmic','RShocky'])
+    Rdf = pd.DataFrame(columns = ['Date','chipID','sensorNo','ROhmic','RShocky'])
     R1list = []
     R2list = []
-    sensorlist = []
+    chipIDlist = []
+    sensorNolist = []
+    datelist = []
     files = file_list(file_search)
     j = 1
     for fil in files:
         l = datareader(fil)
         i = 1
-        print ("\n\n............Processing file " + str(j) + "............")
+        print ("\n\n............Processing file " + str(j) + "............\n")
         j += 1
+        date = dateparser(fil)
+        #print ("\n\n")
+        #print (date)
+        #print ("\n\n")
+        print ("Calculating Resistances for Datasets\n")
         
         for df in l:
-            print ("\n............ Calculating Resistances for Dataset " + str(i) + "............")
+            print (str(i))
             R1, R2 = Resistances(df)
             R1list.append(R1)
             R2list.append(R2)
+            
+            chipID = str(fil)
+            #print (chipID[:-4])
+            sensorNo = i
+            
+            chipIDlist.append(chipID[:-4])
+            sensorNolist.append(sensorNo)
+            datelist.append(date)
             i += 1
-            sensor = str(fil) + "_" + str(i)
-            sensorlist.append(sensor)
             
-            
-    Rdf['Sensor'] = sensorlist
+    Rdf['Date'] =  datelist
+    Rdf['chipID'] = chipIDlist       
+    Rdf['sensorNo'] = sensorNolist
     Rdf['ROhmic'] = R1list
     Rdf['RShocky'] = R2list
 
+    print ("\n\n\t\t\t\tFinished")
+    print ("\n\n----------------------------------------------------------------------------\n")
+    print ("RShocky values beyond 200 kOhm are eliminated by default.")
+    print ("Total number of datapoints lost during the elimination = " + str(len(Rdf[Rdf['RShocky'] > 200])))
+
+
+    Rdf = Rdf[Rdf['RShocky'] > 0]
+    Rdf = Rdf[Rdf['RShocky'] < 200]
+
+    
     return Rdf
+    
+def no_outliers(df,n=2):
+    """Eliminates the outliers (defined by the upper limit of the n*sigma) """
+    mean = df['RShocky'].mean()
+    sigma = df['RShocky'].std()
+    print ("\nData Points beyond " + str(round((mean + n*sigma),2)) + " are eliminated.\n")
+    df = df[df['RShocky'] < mean + n*sigma]
+    return df
             
 def yield_printer(List,lowerlimit = 10,higherlimit = 30):
     select = []
@@ -190,10 +239,24 @@ def yield_printer(List,lowerlimit = 10,higherlimit = 30):
         pass
     
 def write_to_excel(df):
-    name = raw_input("Enter the name for the file - ")
+    name = input("Enter the name for the file - ")
     writer = pd.ExcelWriter(name)
     df.to_excel(writer,'Sheet1')
     writer.save()
+    
+def write_to_csv(df):
+    name = input("Enter the name for the file - ")
+    writer = pd.ExcelWriter(name)
+    df.to_csv()
+    writer.save()
+    
+    
+def excelreader():
+    name = input("Enter the name of the file = ")
+    loader = pd.read_excel(name)
+    return loader
+
+
 #import numpy
 #bins = numpy.linspace(0, 100, 10)        
 #plt.figure(figsize=(8,5))
@@ -205,6 +268,21 @@ def write_to_excel(df):
 #plt.axis([0, 6,0,3.5])
 #plt.show()
 
-    
+#f, (ax1, ax2, ax3) = plt.subplots(1, 3, sharey=True)
+#ax1.plot(x, y)
+#ax1.set_title('Sharing Y axis')
+#ax2.scatter(x, y)
 
-    
+       
+#plt.figure(figsize=(15,5))
+#plt.boxplot(T0130)
+#plt.boxplot(T0131)
+#plt.boxplot(T0201)
+#plt.boxplot(T0202)
+#plt.legend(["01/30","01/31","02/01","02/02"])
+#plt.xlabel("Resistance - kOhm")
+#plt.show()
+
+#b1 = pd.concat([b4_1,b5_1])
+#b1 = b1[b1['ROhmic'] < 200]
+#b1 = b1[b1['ROhmic'] > 0]
