@@ -154,12 +154,14 @@ def R_list(file_search='*.lvm'):
     R1list = []
     R2list = []
     #file_search = input("Please input a string for filename criteria - ")
+    
+    #searching files
     files = file_list(file_search)
     for fil in files:
-        l = datareader(fil)
+        l = datareader(fil) #Parsing and cleaning I-V data
         
         for df in l:
-            R1, R2 = Resistances(df)
+            R1, R2 = Resistances(df) #Calculating ROhmic and RShocky
             R1list.append(R1)
             R2list.append(R2)
         
@@ -167,17 +169,25 @@ def R_list(file_search='*.lvm'):
     
 def R_df(file_search = '*.lvm'):
     
+    """ Grabs the data I-V Data from a list of files, calculates RShocky and ROhmic.
+    Finally store it in a pandas dataframe along with measurement date, ChipID and RShocky.
+    Returns the same dataframe. """
+    
     Rdf = pd.DataFrame(columns = ['Date','chipID','sensorNo','ROhmic','RShocky'])
     R1list = []
     R2list = []
     chipIDlist = []
     sensorNolist = []
     datelist = []
+    
+    # Grab the files from a folder    
+
     files = file_list(file_search)
-    j = 1
+    j = 1 #Counter for files
+    
     for fil in files:
-        l = datareader(fil)
-        i = 1
+        l = datareader(fil) #Parsing I-V Data and Cleaning (as a list of dataframes)
+        i = 1 #Counter for datasets
         print ("\n\n............Processing file " + str(j) + "............\n")
         j += 1
         date = dateparser(fil)
